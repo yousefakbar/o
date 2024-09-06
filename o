@@ -1,0 +1,85 @@
+#!/bin/bash
+#
+#        _         _     _ _
+#   ___ | |__  ___(_) __| (_) __ _ _ __
+#  / _ \| '_ \/ __| |/ _` | |/ _` | '_ \
+# | (_) | |_) \__ \ | (_| | | (_| | | | |
+#  \___/|_.__/|___/_|\__,_|_|\__,_|_| |_|
+# This is 'o' -- The Obsidian CLI Wrapper
+# Author:
+# 	Yousef H. Akbar
+# 	<yhakbar99@gmail.com>
+
+
+# ------------------------------------------------------------------------------
+# Functions
+# ------------------------------------------------------------------------------
+
+assert_obsidian_vault_path_set() {
+	if [ -z "$OBSIDIAN_VAULT_PATH" ]; then
+		echo "ERROR: OBSIDIAN_VAULT_PATH is not set to vault location."
+		exit 1
+	fi
+}
+
+open_today_journal_file() {
+	# Ensure env var is set for obsidian vault path
+	assert_obsidian_vault_path_set
+
+	# TODO: Generalize /journal dir to be customizable to the user
+	TODAY_DATE="$(date '+%Y-%m-%d')"
+	TODAY_NOTE_FILENAME="$OBSIDIAN_VAULT_PATH/journal/$TODAY_DATE.md"
+
+	# Open with your favorite editor
+	$EDITOR "$TODAY_NOTE_FILENAME"
+}
+
+search_md_files_with_fzf() {
+	# Ensure env var is set for obsidian vault path
+	assert_obsidian_vault_path_set
+	
+	# Check if fzf installed
+	if ! command -v fzf > /dev/null 2>&1; then
+		echo "ERROR: fzf is not installed."
+		exit 2
+	fi
+
+	# Find all md files and pick with fzf, then open with favorite editor
+	fd --glob "*.md" ~/Documents/YousefBrain | \
+		fzf --preview 'bat --style=grid --color=always \
+		--line-range=:500 {}' --preview-window=right:60% \
+		--height=40% --border --ansi --delimiter / --nth=-1 \
+		--prompt="🟣 " | \
+		xargs -I {} $EDITOR {}
+}
+
+
+# -----------------------------------------------------------------------------
+# Main Running Block
+# -----------------------------------------------------------------------------
+
+# Check if no arguments are provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 [subcommand]"
+    exit 1
+fi
+
+case $1 in
+	-h | --help | help | h)
+		echo "Help information for the script"
+		;;
+	-v | --version | version | v)
+		echo "$0: v0.1"
+		;;
+	-s | --search | search | s)
+		search_md_files_with_fzf
+		;;
+	-t | --today | today | t)
+		open_today_journal_file
+		;;
+	*)
+		echo "Unknown subcommand: $1"
+		echo "Usage: $0 [subcommand]"
+		exit 1
+		;;
+esac
