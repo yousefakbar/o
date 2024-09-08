@@ -10,6 +10,7 @@
 # 	Yousef H. Akbar
 # 	<yhakbar99@gmail.com>
 
+O_VERSION="v0.1"
 
 # ------------------------------------------------------------------------------
 # Functions
@@ -68,14 +69,14 @@ case $1 in
 	-h | --help | help | h)
 		echo "Help information for the script"
 		;;
-	-v | --version | version | v)
-		echo "$0: v0.1"
-		;;
 	-s | --search | search | s)
 		search_md_files_with_fzf
 		;;
 	-t | --today | today | t)
 		open_today_journal_file
+		;;
+	-v | --version | version | v)
+		echo "$0: $O_VERSION"
 		;;
 	*)
 		echo "Unknown subcommand: $1"
