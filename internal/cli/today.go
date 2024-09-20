@@ -2,10 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"github.com/yousefakbar/o/internal/config"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 	"time"
+	"github.com/yousefakbar/o/internal/config"
 )
 
 var TodayCommand = Command{
@@ -16,7 +18,9 @@ var TodayCommand = Command{
 }
 
 func runCommandToday(cfg *config.ConfigManager, args []string) error {
-	todayNotePath := genTodayNotePath(cfg.DailyNotesPath)
+	// Convert the user's set daily notes file format to a Go date format (ie. YYYY = 2006 etc.)
+	today := time.Now().Format(convertObsidianDateFormat(cfg.DailyNotesConfig.Format))
+	todayNotePath := filepath.Join(cfg.ObsidianVaultPath, cfg.DailyNotesConfig.Folder, fmt.Sprintf("%s.md", today))
 
 	err := launchEditor(cfg.Editor, todayNotePath)
 	if err != nil {
@@ -38,7 +42,11 @@ func launchEditor(editor string, filePath string) error {
 	return nil
 }
 
-func genTodayNotePath(dailyNotesPath string) string {
-	today := time.Now().Format("2006-01-02")
-	return fmt.Sprintf("%s/%s.md", dailyNotesPath, today)
+// TODO: Completely cover MomentJS date formats
+// Ref: https://momentjs.com/docs/#/displaying/format/
+func convertObsidianDateFormat(format string) string {
+	format = strings.Replace(format, "YYYY", "2006", 1)
+	format = strings.Replace(format, "MM", "01", 1)
+	format = strings.Replace(format, "DD", "02", 1)
+	return format
 }

@@ -19,7 +19,9 @@ type ConfigManager struct {
 	// Fields related to Obsidian metadata and settings
 	ObsidianVaultPath	string
 	DotObsidianVaultPath	string
-	DailyNotesPath		string
+
+	// Configuration(s) related to program behavior
+	DailyNotesConfig	*obsidian.DailyNotesConfig
 }
 
 // LoadConfig: loads configuration from environment variables
@@ -28,7 +30,7 @@ func LoadConfig() (*ConfigManager, error) {
 	editor := os.Getenv(envEditor)
 	if editor == "" {
 		fmt.Println("Defaulting EDITOR to `xdg-open`")
-		editor = "xdg-open"
+		editor = "xdg-open" // TODO: this might be different for various OS's
 	}
 
 	// Get the user's Obsidian vault path from the environment variable
@@ -43,17 +45,20 @@ func LoadConfig() (*ConfigManager, error) {
 	}
 	dotObsidianPath := filepath.Join(vaultPath, ".obsidian")
 
-	dailyNotesPath, err := obsidian.LoadDailyNotesConfig(vaultPath)
+	// Import the `daily-notes` plugin json settings from respective json file
+	dailyNotesConfig, err := obsidian.LoadDailyNotesConfig(vaultPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to load config for daily-notes plugin: %v", err)
 	}
 
+	// Final ConfigManager variable to return before running any config-related commands
 	config := &ConfigManager{
 		Editor:			editor,
 
 		ObsidianVaultPath:	vaultPath,
 		DotObsidianVaultPath:	dotObsidianPath,
-		DailyNotesPath:		dailyNotesPath,
+
+		DailyNotesConfig:	dailyNotesConfig,
 	}
 
 	return config, nil
