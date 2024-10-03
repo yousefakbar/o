@@ -20,7 +20,7 @@ var SearchCommand = Command{
 // runCommandSearch Runs the "Search" command for this program
 func runCommandSearch(cfg *config.ConfigManager, args []string) error {
 	// Capture all .md files using fd
-	files, err := findNotesInVault("fd", cfg.ObsidianVaultPath)
+	files, err := findNotesInVault(cfg.ObsidianVaultPath)
 	if err != nil {
 		return fmt.Errorf("Failed to launch find command: %w", err)
 	}
@@ -41,16 +41,23 @@ func runCommandSearch(cfg *config.ConfigManager, args []string) error {
 }
 
 // findNotesInVault Uses find command to capture all .md files in the vault
-func findNotesInVault(findCmd string, findDir string) ([]string, error) {
+func findNotesInVault(findDir string) ([]string, error) {
+	findCmd := "fd"
+
 	// Verify that the findCmd binary is present in the user PATH
 	if _, err := exec.LookPath(findCmd); err != nil {
-		return nil, fmt.Errorf("Failed to find `%s` in PATH", findCmd)
+		findCmd = "find"
 	}
 
 	var out bytes.Buffer
 
 	// Run `findCmd` to search and return list of markdown files in findDir
 	cmd := exec.Command(findCmd, "-e", "md", ".", findDir)
+	if findCmd == "find" {
+		// find /home/yha/Documents/YousefBrain/**/*.md
+		cmd = exec.Command(findCmd, findDir, "-name", "*.md")
+	}
+
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
