@@ -93,7 +93,7 @@ func validateVaultPath(path string) error {
 	info, err = os.Stat(dotObsidianPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("Path %s is not a valid obsidian directory (missing .obsidian/)", dotObsidianPath)
+			return fmt.Errorf("Path %s is not a valid obsidian directory (missing .obsidian/)", path)
 		}
 		return err // Handle any other error (ie. permissions etc.)
 	}
