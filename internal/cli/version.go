@@ -5,7 +5,7 @@ import (
 	"github.com/yousefakbar/o/internal/config"
 )
 
-const Version = "0.1"
+const Version = "dev"
 
 var VersionCommand = Command{
 	Name:		"version",
