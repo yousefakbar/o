@@ -18,6 +18,7 @@ var CommandRegistry = []Command{
 	SearchCommand,
 	TodayCommand,
 	VersionCommand,
+	NewCommand,
 }
 
 // Run: Executes the main running block of `o` with context of `cfgManager`

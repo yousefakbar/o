@@ -22,6 +22,7 @@ type ConfigManager struct {
 
 	// Configuration(s) related to program behavior
 	DailyNotesConfig	*obsidian.DailyNotesConfig
+	NewFileConfig		*obsidian.NewFileConfig
 }
 
 // LoadConfig: loads configuration from environment variables
@@ -51,6 +52,12 @@ func LoadConfig() (*ConfigManager, error) {
 		return nil, fmt.Errorf("Failed to load config for daily-notes plugin: %v", err)
 	}
 
+	// Import the new file location configuration settings from JSON
+	newFileConfig, err := obsidian.LoadNewFileConfig(vaultPath)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to load config for new files: %v", err)
+	}
+
 	// Final ConfigManager variable to return before running any config-related commands
 	config := &ConfigManager{
 		Editor:			editor,
@@ -59,6 +66,7 @@ func LoadConfig() (*ConfigManager, error) {
 		DotObsidianVaultPath:	dotObsidianPath,
 
 		DailyNotesConfig:	dailyNotesConfig,
+		NewFileConfig:		newFileConfig,
 	}
 
 	return config, nil
