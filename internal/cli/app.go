@@ -47,7 +47,10 @@ func Run(args []string) error {
 	}
 
 	// Run the selected command and return gracefully
-	cmd.Run(cfgManager, args)
+	if err = cmd.Run(cfgManager, args); err != nil {
+		return fmt.Errorf("Failed running command %s: %w", cmd.Name, err)
+	}
+
 	return nil
 }
 
