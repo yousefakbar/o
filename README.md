@@ -22,7 +22,8 @@ Key features include:
 
 ## Installation
 
-> **Prerequisites**
+> [!IMPORTANT]
+> **Prerequisites**:
 > - [fzf](https://github.com/junegunn/fzf)
 > - (optional) [fd](https://github.com/sharkdp/fd)
 
@@ -63,7 +64,7 @@ If you want to build 'o' from the source code, follow these steps:
 
 'o' provides several commands to help you manage your Obsidian vault efficiently.
 
-> **Note**:
+> [!NOTE]
 > Each command has a shorthand alias (e.g. `t` for `today`). You can learn more in the help screen `o help`
 
 ### Today
