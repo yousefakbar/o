@@ -10,15 +10,11 @@ import (
 const (
 	envObsidianVaultPath	= "OBSIDIAN_VAULT_PATH"
 	envEditor		= "EDITOR"
-	envFileBrowser		= "FILE"
-	envTerminal		= "TERMINAL"
 )
 
 type ConfigManager struct {
 	// Environment variables related to program behavior
 	Editor			string
-	FileBrowser		string
-	Terminal		string
 
 	// Fields related to Obsidian metadata and settings
 	ObsidianVaultPath	string
@@ -36,17 +32,6 @@ func LoadConfig() (*ConfigManager, error) {
 	if editor == "" {
 		fmt.Println("Defaulting EDITOR to `xdg-open`")
 		editor = "xdg-open" // TODO: this might be different for various OS's
-	}
-
-	fileBrowser := os.Getenv(envFileBrowser)
-	if fileBrowser == "" {
-		fmt.Println("Defaulting FILE browser to `ranger`")
-		fileBrowser = "ranger"
-	}
-
-	terminalEmulator := os.Getenv(envTerminal)
-	if terminalEmulator == "" {
-		fmt.Println("WARNING: $TERMINAL is not set")
 	}
 
 	// Get the user's Obsidian vault path from the environment variable
@@ -76,8 +61,6 @@ func LoadConfig() (*ConfigManager, error) {
 	// Final ConfigManager variable to return before running any config-related commands
 	config := &ConfigManager{
 		Editor:			editor,
-		FileBrowser:		fileBrowser,
-		Terminal:		terminalEmulator,
 
 		ObsidianVaultPath:	vaultPath,
 		DotObsidianVaultPath:	dotObsidianPath,
